@@ -8,6 +8,10 @@ Please choose from our menu of options:
 
 # if they press 1
 
+Select Department to View: (name)
+
+# enter department name
+
 1) View Employees
 2) Add Employees
 3) Return to Previous Options
