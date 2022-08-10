@@ -137,11 +137,13 @@ while True:
                     emp_salary = int(input("Please enter employee yearly salary: "))
                     if emp_salary < 40000:
                         raise SalaryException
-                    emp_dept = input("What is the employee's department? ")
+                    emp_dept = Department.dept_list[select_dept-1].name
                     emp_manager = False if input("Is employee manager? (yes/no) ") != "yes" else True
                     new_empl = Employee(emp_first, emp_last, emp_salary, emp_dept, emp_manager)
                     new_empl.gen_randomid()
-                    Department.add_employee(new_empl)         
+                    Department.dept_list[select_dept-1].add_employee(new_empl)
+                    Department.dept_list[select_dept-1].list_employee()
+
 
                 except SalaryException:
                         print("This salary is too low")
