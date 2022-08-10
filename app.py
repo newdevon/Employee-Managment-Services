@@ -12,19 +12,28 @@ class Department:
         self.empl_query.append(empl)
 
     #finance.remove_employee(id, emplist) #id of personel to remove
-    def remove_employee(self, id, emplist):
+    def remove_employee(self, id):
+
+        # REMOVING EMPLOYEE FROM DEPARTMENT EMPLOYEE LIST
+
         id_list = [empl.empid for empl in self.empl_query]
         q_index = id_list.index(id)
         name = self.empl_query[q_index].first + " " + self.empl_query[q_index].last
-        
-        # remove employee from empl_query which belongs to that department
         self.empl_query.pop(q_index)
-
+    
         print(f"{name} has been removed from {self.name}")
+        # SHOULD ALSO REMOVE EMPLOYEE FROM ALL EMPLOYEE LIST AS WELL
         
     def list_employee(self):
-        for employee in self.query:
-            print(f"{employee.first} {employee.last}")
+        for employee in self.empl_query:
+            print(f"{employee.first} {employee.last}, id: {employee.empid}")
+
+        # return self.empl_query
+
+    def list_departments():
+        print("I am here!")
+        for dept in Department.dept_list:
+            print(f"{dept.name}")
 
 class Employee:
     emplist = []
@@ -51,13 +60,24 @@ class Employee:
     def gen_randomid(self):
         self.empid = random.randrange(10000, 99999)
         
-# class SalaryException (Exception): pass
-# try:
-#       salary = int(input("Please enter your yearly salary"))
-#       if salary < 40000:
-#         raise SalaryException("This salary is too low")
-# except SalaryException as e:
-#       print(e)
+    def remove_employee(self, id):
+
+        # REMOVE EMPLOYEE FROM ALL EMPLOYEE LIST AS WELL
+
+        id_list = [empl.empid for empl in Employee.emplist]
+        q_index = id_list.index(id)
+        name = Employee.emplist[q_index].first + " " + Employee.emplist[q_index].last
+        Employee.emplist.pop(q_index)
+    
+        print(f"{name} has been removed from All Employees List")
+        
+class SalaryException (Exception): pass
+try:
+    salary = int(input("Please enter your yearly salary"))
+    if salary < 40000:
+        raise SalaryException("This salary is too low")
+except SalaryException as e:
+    print(e)
     
 
 employee1 = Employee('kenny', 'yang', 50000, 'Finance', False)
@@ -79,10 +99,47 @@ sales = Department("sales")
 
 finance.add_employee(employee1)
 finance.add_employee(employee2)
+finance.add_employee(employee3)
+finance.add_employee(employee6)
+finance.add_employee(employee7)
 
 finance.list_employee()
-for employee in Employee.emplist:
-    print(f"{employee.first} {employee.last}")
+# for employee in Employee.emplist:
+#     print(f"{employee.first} {employee.last}")
 
-for dept in Department.dept_list:
-    print(f"{dept.name}")
+# remove_id = int(input("Which employee would you like to remove? (id): "))
+# finance.remove_employee(remove_id)
+# finance.list_employee()
+
+
+start = int(input("1) View Departments\n2) Add Departments\nChooose (1/2): "))
+while True:
+    if start == 1:
+        print(f"Here are the departments:\n")
+        Department.list_departments()
+        select_dept = input("1) Finance\n2) Sales\n")
+        if select_dept == 1:
+            viewsales = input("SALES DEPARTMENT\n1) View employees\n3) Add employees\n4) Return to previous menu.")
+            if viewsales == 1:
+                print("Here are all the Employees {Employee.emplist}")
+            elif viewsales == 2:
+                pass
+            elif viewsales == 3:
+                pass
+        else:
+            print("Please choose a valid option")
+            
+        viewfinance = input("FINANCE DEPARTMENT\n1) View employees\n2) Add employees\n3) Return to previous menu.")
+        if viewfinance == 1:
+            print("Here are all the Employees {Employee.emplist}")
+        elif viewfinance == 2:
+            pass
+        elif viewfinance == 3:
+            pass
+        else:
+            print("Please choose a valid option")
+    elif start == 2:
+        dept_input = input("New Department: ")
+        new_dept = Department(dept_input)
+    else: 
+        start = int(input("1) View Departments\n2) to add Departments(1/2): "))
