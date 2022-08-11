@@ -18,15 +18,16 @@ class Department:
         self.empl_query.append(empl)
 
     #finance.remove_employee(id, emplist) #id of personel to remove
-    def remove_employee(self, id):    
+    def remove_employee(self, id, action):    
         # REMOVING EMPLOYEE FROM DEPARTMENT EMPLOYEE LIST
 
         empid_list = [empl.empid for empl in self.empl_query]
         empid_index = empid_list.index(id)
         name = self.empl_query[empid_index].name
         del self.empl_query[empid_index]
-    
-        print(f"{name} has been removed from {self.name}")
+        
+        if action == "delete":
+            print(f"{name} has been removed from {self.name}")
         # SHOULD ALSO REMOVE EMPLOYEE FROM ALL EMPLOYEE LIST AS WELL
         
     def list_employee(self):
@@ -97,15 +98,15 @@ class Employee:
         self.department = department
     def update_manager(self, manager):
         self.manager = manager
-    #def update_hiredate(self, hiredate):
-   #     self.hiredate = hiredate
+    def update_empid(self, empid):
+        self.hiredate = empid
     def gen_randomid(self):
         return random.randrange(10000, 99999)
     def random_hiredate(self):
         date = str(randint(2015,2022)) + " " + str(randint(1,12)) + " " + str(randint(1,28))
         return parser.parse(date)
 
-    def remove_employee(self, id):
+    def remove_employee(self, id, action):
         # REMOVE EMPLOYEE FROM ALL EMPLOYEE LIST AS WELL
 
         empid_list = [empl.empid for empl in Employee.emplist]
@@ -113,7 +114,8 @@ class Employee:
         name = Employee.emplist[empid_index].name
         del Employee.emplist[empid_index]
     
-        print(f"{name} has been removed from All Employees List")
+        if action == "delete":
+            print(f"{name} has been removed from All Employees List")
 
     def list_names():
         for i in range(len(Employee.emplist)):
@@ -292,7 +294,8 @@ while True:
             print("3) See Sorted by Hire Date")
             print("4) See Sorted by Salary")
             print("5) See all Managers")
-            print("6) Delete an Employee\n")
+            print("6) Update an Employee")
+            print("7) Delete an Employee\n")
             print("Enter any other key to go back")
             select = int(input("Enter your selection: "))
 
@@ -325,9 +328,38 @@ while True:
                 case 6:
                     while True:
                         try:
+                            search = int(input("Input ID of employee you would like to update (digit): "))
+                            Department.find_department(search)
+                            Employee.find_employee(search)
+
+                            while True:
+                                class SalaryException (Exception): pass
+                                try:
+                                    emp_name = input("Enter Employee New Name: ").lower()
+                                    emp_salary = int(input("Please enter employee new yearly salary: "))
+                                    if emp_salary < 40000:
+                                        raise SalaryException
+                                    emp_dept = Department.dept_list[select_dept].name
+                                    emp_manager = False if input("Is employee manager? (yes/no) ") != "yes" else True
+                                    new_empl = Employee(emp_name, emp_salary, emp_dept, emp_manager)
+                                    new_empl.update_empid = search
+                                    Department.dept_list[select_dept].add_employee(new_empl)
+                                    print(f"{Employee.find_employee(search).name} has been updated to {new_empl.name.title()} and {Department.dept_list[select_dept].name.title()} List")
+                                    break
+                                except SalaryException:
+                                    print("This salary is too low")
+                            
+                            Department.find_department(search).remove_employee(search, "update")
+                            Employee.find_employee(search).remove_employee(search, "update")
+                            break
+                        except:
+                            print("ERROR ID doesn't exist in database\n")
+                case 7:
+                    while True:
+                        try:
                             search = int(input("Enter ID of employee you would like to delete: "))
-                            Department.find_department(search).remove_employee(search)
-                            Employee.find_employee(search).remove_employee(search)
+                            Department.find_department(search).remove_employee(search, "delete")
+                            Employee.find_employee(search).remove_employee(search, "delete")
                             break
                         except:
                             print("ERROR ID doesn't exist in database\n")
