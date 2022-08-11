@@ -1,13 +1,11 @@
 from logging import root
+import math
 import random 
 from random import randrange, randint
 from time import time
-from re import X
 from select import select
-from tracemalloc import start
-from turtle import end_fill
-from unicodedata import name
 from dateutil import parser
+
 class Department:
     dept_list = []
 
@@ -20,21 +18,20 @@ class Department:
         self.empl_query.append(empl)
 
     #finance.remove_employee(id, emplist) #id of personel to remove
-    def remove_employee(self, id):
-
+    def remove_employee(self, id):    
         # REMOVING EMPLOYEE FROM DEPARTMENT EMPLOYEE LIST
 
-        id_list = [empl.empid for empl in self.empl_query]
-        q_index = id_list.index(id)
-        name = self.empl_query[q_index].first + " " + self.empl_query[q_index].last
-        del self.empl_query[q_index]
+        empid_list = [empl.empid for empl in self.empl_query]
+        empid_index = empid_list.index(id)
+        name = self.empl_query[empid_index].name
+        del self.empl_query[empid_index]
     
         print(f"{name} has been removed from {self.name}")
         # SHOULD ALSO REMOVE EMPLOYEE FROM ALL EMPLOYEE LIST AS WELL
         
     def list_employee(self):
         for employee in self.empl_query:
-            print(f"{employee.name}, id: {employee.empid}, hire_date: {employee.hiredate}")
+            print(f"{employee.name.title()}, id: {employee.empid}, hire_date: {employee.hiredate}")
 
     def remove_department(self, del_index):
         print(f"{self.name} has been removed from Department list")
@@ -42,7 +39,7 @@ class Department:
 
     def list_departments():
         for i in range(len(Department.dept_list)):
-            print(f"{i + 1}) {Department.dept_list[i].name}")
+            print(f"{i + 1}) {Department.dept_list[i].name.title()}")
 
     def query_hiredate(self):
         sorted_dates = [empl.hiredate for empl in self.empl_query]
@@ -52,7 +49,7 @@ class Department:
         for date in sorted_dates:
             for empl in self.empl_query:
                 if date == empl.hiredate:
-                    sorted_dates_with_names.append(f"{empl.name}, hire date: {date}")
+                    sorted_dates_with_names.append(f"{empl.name.title()}, hire date: {date}")
         
         print(sorted_dates_with_names)
     
@@ -64,10 +61,17 @@ class Department:
         for salary in sorted_salary:
             for empl in self.empl_query:
                 if salary == empl.salary:
-                    sorted_salary_with_names.append(f"{empl.name}, salary :{salary}")
+                    sorted_salary_with_names.append(f"{empl.name.title()}, salary :{salary}")
 
         print(sorted_salary_with_names)
 
+    #given id, find employee's department and return its object
+    def find_department(id):
+        for dept in Department.dept_list:
+            for empl in dept.empl_query:
+                if empl.empid == id:
+                    return dept
+        print("Couldn't find department")
 
 class Employee: 
     emplist = []
@@ -102,40 +106,47 @@ class Employee:
         return parser.parse(date)
 
     def remove_employee(self, id):
-
         # REMOVE EMPLOYEE FROM ALL EMPLOYEE LIST AS WELL
 
-        id_list = [empl.empid for empl in Employee.emplist]
-        q_index = id_list.index(id)
-        name = Employee.emplist[q_index].name
-        del Employee.emplist[q_index]
+        empid_list = [empl.empid for empl in Employee.emplist]
+        empid_index = empid_list.index(id)
+        name = Employee.emplist[empid_index].name
+        del Employee.emplist[empid_index]
     
         print(f"{name} has been removed from All Employees List")
 
     def list_names():
         for i in range(len(Employee.emplist)):
-            print(f"{i+1}) {Employee.emplist[i].name}")
+            print(f"{i+1}) {Employee.emplist[i].name.title()}")
+    def list_names_and_id():
+        for i in range(len(Employee.emplist)):
+            print(f"{i+1}) {Employee.emplist[i].name.title()}, id: {Employee.emplist[i].empid}")
+
+    def list_managers():
+        count = 1
+        for i in range(len(Employee.emplist)):
+            if Employee.emplist[i].manager == True:
+                print(f"{count}) {Employee.emplist[i].name.title()}")
+                count += 1
     
     def list_all(self):
-        print(f"Name: {self.name}")
+        print(f"Name: {self.name.title()}")
         print(f"Employee ID: {self.empid}")
         print(f"Salary: {self.salary}")
-        print(f"Department: {self.department}")
+        print(f"Department: {self.department.title()}")
         isManager = "Yes" if self.manager else "No"
         print(f"Manager: {isManager}")
-        date_time_obj = self.hiredate
-        #date_time_obj = datetime.striptime(self.hiredate, '%y/%m/%d')
-        print(f"Hire Date: {date_time_obj}")
+        print(f"Hire Date: {self.hiredate}")
     
     def query_name(name):
         name_list = [empl.name for empl in Employee.emplist]
         name_index = name_list.index(name)
         Employee.emplist[name_index].list_all()
 
-    #  def query_empid(empid):
-    #     empid_list = [empl.empid for empl in Employee.emplist]
-    #     empid_index = empid_list.index(empid)
-    #     Employee.emplist[empid_index].list_all()
+    def query_empid(empid):
+        empid_list = [empl.empid for empl in Employee.emplist]
+        empid_index = empid_list.index(empid)
+        Employee.emplist[empid_index].list_all()
 
     def query_hiredate():
         sorted_dates = [empl.hiredate for empl in Employee.emplist]
@@ -145,7 +156,7 @@ class Employee:
         for date in sorted_dates:
             for empl in Employee.emplist:
                 if date == empl.hiredate:
-                    sorted_dates_with_names.append(f"{empl.name}, hire date: {date}")
+                    sorted_dates_with_names.append(f"{empl.name.title()}, hire date: {date}")
         
         print(sorted_dates_with_names)
     
@@ -157,18 +168,15 @@ class Employee:
         for salary in sorted_salary:
             for empl in Employee.emplist:
                 if salary == empl.salary:
-                    sorted_salary_with_names.append(f"{empl.name}, salary :{salary}")
+                    sorted_salary_with_names.append(f"{empl.name.title()}, salary :{salary}")
 
         print(sorted_salary_with_names)
-  
-        
-# class SalaryException (Exception): pass
-# try:
-#     salary = int(input("Please enter your yearly salary"))
-#     if salary < 40000:
-#         raise SalaryException("This salary is too low")
-# except SalaryException as e:
-#     print(e)
+    
+    def find_employee(id):
+        for empl in Employee.emplist:
+            if empl.empid == id:
+                return empl
+        print("Couldn't find Employee")
     
 
 employee1 = Employee('kenny yang', 50000, 'Finance', False)
@@ -180,9 +188,6 @@ employee6 = Employee('john everyman', 48000, 'Finance', False)
 employee7 = Employee('lisa simpson', 80000, 'Finance', True)
 employee8 = Employee('montgomery burns', 100000, 'Sales', True)
 employee9 = Employee('Smain Benloukil', 49000, 'Sales', False)
-
-
-# print(employee1.empid, employee2.empid)
 
 finance = Department("Finance")
 sales = Department("Sales")
@@ -198,95 +203,136 @@ sales.add_employee(employee5)
 sales.add_employee(employee8)
 sales.add_employee(employee9)
 
-
-root = int(input("Hello, Welcome to 3Corp.\n1) View Departments\n2) Add Departments\n3) See All Employees and Queries\nChooose (1/2/3): "))
+print("Hello, Welcome to 3Corp.")
 while True:
+    root = None
+    while True:
+        try:
+            root = int(input("\n1) View Departments\n2) Add Departments\n3) See All Employees and Queries\nChooose (1/2/3): "))
+            break
+        except:
+            print("\nPlease enter a valid entry")
     if root == 1:
-        print(f"Here are the departments:")
-        Department.list_departments()
-
-        select_dept = int(input("Enter digit for which department: ")) - 1
-        viewCurrent = int(input(f"{Department.dept_list[select_dept].name} Department\n1) View employees\n2) Add employees\n3) Delete Department\n--- Enter other key to go back --- : "))
+        select_dept = None
         while True:
-            if viewCurrent == 1:
-                print(f"Here are all the Employees") 
-                Department.dept_list[select_dept-1].list_employee()
-                print("Here are the employees sorted by hire date")
-                Department.dept_list[select_dept-1].query_hiredate()
-                print("Here are the employees sorted by salary")
-                Department.dept_list[select_dept-1].query_salary()
-                break
-            elif viewCurrent == 2:
-                while True:
-                    class SalaryException (Exception): pass
-                    try:
-                        emp_name = input("Enter Employee Full Name: ")
-                        emp_salary = int(input("Please enter employee yearly salary: "))
-                        if emp_salary < 40000:
-                            raise SalaryException
-                        emp_dept = Department.dept_list[select_dept-1].name
-                        emp_manager = False if input("Is employee manager? (yes/no) ") != "yes" else True
-                        new_empl = Employee(emp_name, emp_salary, emp_dept, emp_manager)
-                        # new_empl.gen_randomid()
-                        # new_empl.random_hiredate()
-                        Department.dept_list[select_dept-1].add_employee(new_empl)
-                        Department.dept_list[select_dept-1].list_names()
-                        break
-                    except SalaryException:
-                        print("This salary is too low")
+            try:
+                print(f"\nHere are the departments:")
+                Department.list_departments()
+                select_dept = int(input("Enter digit for which department: ")) - 1
+                test = Department.dept_list[select_dept].name.title()
+            except:
+                print("\nPlease enter a valid department selection\n")
 
-            elif viewCurrent == 3:
-                print(select_dept)
-                Department.dept_list[select_dept].remove_department(select_dept)
+            viewCurrent = None
+            while True:
+                try:
+                    viewCurrent = int(input(f"\n{Department.dept_list[select_dept].name.title()} Department\n1) View employees\n2) Add employees\n3) Delete Department\n4) Go Back\nChoose (1/2/3/4): "))
+                except: print("Please enter a valid entry")
+                if viewCurrent == 1:
+                    print(f"\nThere are {len(Department.dept_list[select_dept].empl_query)} Employees in {Department.dept_list[select_dept].name.title()}") 
+                    Department.dept_list[select_dept].list_employee()
+
+                    while True:
+                        class InvalidEntry (Exception): pass
+                        dept_empl_select = None
+                        try:
+                            dept_empl_select = int(input(f"\n1) View {Department.dept_list[select_dept].name.title()} Employees by Hire Date\n2) View {Department.dept_list[select_dept].name.title()} Employees by Salary\nChoose (1/2): "))
+                            if dept_empl_select != 1 and dept_empl_select != 2:
+                                raise InvalidEntry
+                        except:
+                            print("Invalid Entry Try Again")
+                        
+                    
+                        match dept_empl_select:
+                            case 1:
+                                print("\nHere are the employees sorted by hiredate")
+                                Department.dept_list[select_dept].query_hiredate()
+                            case 2:
+                                print("\nHere are the employees sorted by salary")
+                                Department.dept_list[select_dept].query_salary()
+                        break
+                        
+                elif viewCurrent == 2:
+                    while True:
+                        class SalaryException (Exception): pass
+                        try:
+                            emp_name = input("Enter Employee Full Name: ").lower()
+                            emp_salary = int(input("Please enter employee yearly salary: "))
+                            if emp_salary < 40000:
+                                raise SalaryException
+                            emp_dept = Department.dept_list[select_dept].name
+                            emp_manager = False if input("Is employee manager? (yes/no) ") != "yes" else True
+                            new_empl = Employee(emp_name, emp_salary, emp_dept, emp_manager)
+                            Department.dept_list[select_dept].add_employee(new_empl)
+                            print(f"{new_empl.name.title()} has been added to Employee and {Department.dept_list[select_dept].name.title()} List")
+                            break
+                        except SalaryException:
+                            print("This salary is too low")
+
+                elif viewCurrent == 3:
+                    print(select_dept)
+                    Department.dept_list[select_dept].remove_department(select_dept)
+                    break
+                else:
+                    break
+            go_back = input("Go Back (yes/no)? ")
+            if go_back == "yes":
                 break
-            else:
-                break
-        else:
-            print("Please choose a valid option")
             
     elif root == 2:
-        dept_name = input("Department Name: ")
+        dept_name = input("\nDepartment Name: ").lower()
         new_dept = Department(dept_name)
     elif root == 3:
         print(f"\nHere are all the Employees") 
-        Employee.list_names()
+        Employee.list_names_and_id()
+        while True:    
+            print("\nPlease choose from the menu of options below\n")
+            print("1) Search Employees by Name")
+            print("2) Search Employees by ID")
+            print("3) See Sorted by Hire Date")
+            print("4) See Sorted by Salary")
+            print("5) See all Managers")
+            print("6) Delete an Employee\n")
+            print("Enter any other key to go back")
+            select = int(input("Enter your selection: "))
 
-        print("\nPlease choose from the menu of options below\n")
-        print("1) Search Employees by Name")
-        print("2) Search Employees by ID")
-        print("3) See Sorted by Hire Date")
-        print("4) See Sorted by Salary")
-        print("5) See all Managers\n")
-        print("Enter any other key to go back")
-        select = int(input("Enter your selection: "))
-
-        match select:
-            case 1:
-                while True:
-                    try:
-                        search = input("Enter full name of employee you would like to search: ")
-                        Employee.query_name(search)
-                        break
-                    except:
-                        print("Name doesn't exist in database")
-            case 2:
-                while True:
-                    try:
-                        search = input("Enter ID of employee you would like to search: ")
-                        # Employee.query_empid(search)
-                        # NEED WAY TO SEE IDs
-                        # break
-                    except:
-                        print("ID doesn't exist in database")
-            case 3:
-                print("Here are the employees sorted by hire date")
-                Employee.query_hiredate()
-            case 4:
-                print("Here are the employees sorted by salary")
-                Employee.query_salary()
-            case 5:
-                print("Here are all managers")
-                # METHOD NOT YET CREATED
-        break
+            match select:
+                case 1:
+                    while True:
+                        try:
+                            search = input("Enter full name of employee you would like to search: ").lower()
+                            Employee.query_name(search)
+                            break
+                        except:
+                            print("Name doesn't exist in database\n")
+                case 2:
+                    while True:
+                        try:
+                            search = int(input("Enter ID of employee you would like to search: "))
+                            Employee.query_empid(search)
+                            break
+                        except:
+                            print("ID doesn't exist in database\n")
+                case 3:
+                    print("Here are the employees sorted by hire date: \n")
+                    Employee.query_hiredate()
+                case 4:
+                    print("Here are the employees sorted by salary: \n")
+                    Employee.query_salary()
+                case 5:
+                    print("Here are all managers: \n")
+                    Employee.list_managers()
+                case 6:
+                    while True:
+                        try:
+                            search = int(input("Enter ID of employee you would like to delete: "))
+                            Department.find_department(search).remove_employee(search)
+                            Employee.find_employee(search).remove_employee(search)
+                            break
+                        except:
+                            print("ERROR ID doesn't exist in database\n")
+                    
+                case _:
+                    break
     else: 
-        print("Please input ")
+        break
