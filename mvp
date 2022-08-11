@@ -14,7 +14,8 @@ Select Department to View: (name)
 
 1) View Employees
 2) Add Employees
-3) Return to Previous Options
+3) Delete Department
+--- Enter anything else to go back --- : 
 
 # if they press 1
 
@@ -24,7 +25,17 @@ Select Department to View: (name)
 
 # if they press 1
 
-1) Which employee would you like to view?: (id)
-2) Return to Previous Options
+1) Search employees by Name
+2) Search employees by ID
+3) Sort employees by salary
+4) Sort employees by manager
+5) Sort employees by date of hire 
+6) Return to Previous Options
+
+# if they press 3
+
+1) Ascending
+2) Descending
 
 # type id shown, or raise an error
+
