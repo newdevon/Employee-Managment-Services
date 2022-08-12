@@ -27,7 +27,7 @@ class Department:
         del self.empl_query[empid_index]
         
         if action == "delete":
-            print(f"{name} has been removed from {self.name}")
+            print(f"{name.title()} has been removed from {self.name}")
         # SHOULD ALSO REMOVE EMPLOYEE FROM ALL EMPLOYEE LIST AS WELL
         
     def list_employee(self):
@@ -115,7 +115,7 @@ class Employee:
         del Employee.emplist[empid_index]
     
         if action == "delete":
-            print(f"{name} has been removed from All Employees List")
+            print(f"{name.title()} has been removed from All Employees List")
 
     def list_names():
         for i in range(len(Employee.emplist)):
@@ -132,7 +132,7 @@ class Employee:
                 count += 1
     
     def list_all(self):
-        print(f"Name: {self.name.title()}")
+        print(f"\nName: {self.name.title()}")
         print(f"Employee ID: {self.empid}")
         print(f"Salary: {self.salary}")
         print(f"Department: {self.department.title()}")
@@ -329,8 +329,9 @@ while True:
                     while True:
                         try:
                             search = int(input("Input ID of employee you would like to update (digit): "))
-                            Department.find_department(search)
-                            Employee.find_employee(search)
+                            fname = Employee.find_employee(search).name
+                            Department.find_department(search).remove_employee(search, "update")
+                            Employee.find_employee(search).remove_employee(search, "update")
 
                             while True:
                                 class SalaryException (Exception): pass
@@ -339,18 +340,20 @@ while True:
                                     emp_salary = int(input("Please enter employee new yearly salary: "))
                                     if emp_salary < 40000:
                                         raise SalaryException
-                                    emp_dept = Department.dept_list[select_dept].name
-                                    emp_manager = False if input("Is employee manager? (yes/no) ") != "yes" else True
-                                    new_empl = Employee(emp_name, emp_salary, emp_dept, emp_manager)
+                                    print(f"\nHere are the departments:")
+                                    Department.list_departments()
+                                    new_dept_index = int(input("Enter digit for which new department: ")) - 1
+                                    emp_new_dept = Department.dept_list[new_dept_index].name
+                                    emp_manager = False if input("\nIs employee manager? (yes/no) ") != "yes" else True
+                                    new_empl = Employee(emp_name, emp_salary, emp_new_dept, emp_manager)
                                     new_empl.update_empid = search
-                                    Department.dept_list[select_dept].add_employee(new_empl)
-                                    print(f"{Employee.find_employee(search).name} has been updated to {new_empl.name.title()} and {Department.dept_list[select_dept].name.title()} List")
+                                    print(f"{Department.dept_list[new_dept_index].name}")
+                                    Department.dept_list[new_dept_index].add_employee(new_empl)
+                                    print(f"{fname} has been updated to {new_empl.name.title()} and {Department.dept_list[new_dept_index].name.title()} List")
                                     break
                                 except SalaryException:
                                     print("This salary is too low")
                             
-                            Department.find_department(search).remove_employee(search, "update")
-                            Employee.find_employee(search).remove_employee(search, "update")
                             break
                         except:
                             print("ERROR ID doesn't exist in database\n")
