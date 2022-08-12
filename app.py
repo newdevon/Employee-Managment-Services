@@ -42,7 +42,7 @@ class Department:
         for i in range(len(Department.dept_list)):
             print(f"{i + 1}) {Department.dept_list[i].name.title()}")
 
-    def query_hiredate(self):
+    def query_hiredate(self, res):
         sorted_dates = [empl.hiredate for empl in self.empl_query]
         sorted_dates.sort()
 
@@ -52,9 +52,12 @@ class Department:
                 if date == empl.hiredate:
                     sorted_dates_with_names.append(f"{empl.name.title()}, hire date: {date}")
         
-        print(sorted_dates_with_names)
+        if res == "yes":
+            print(sorted_dates_with_names)
+        else:
+            print(sorted_dates_with_names[::-1])
     
-    def query_salary(self):
+    def query_salary(self, res):
         sorted_salary = [empl.salary for empl in self.empl_query]
         sorted_salary.sort()
 
@@ -64,7 +67,10 @@ class Department:
                 if salary == empl.salary:
                     sorted_salary_with_names.append(f"{empl.name.title()}, salary :{salary}")
 
-        print(sorted_salary_with_names)
+        if res == "yes":
+            print(sorted_salary_with_names)
+        else:
+            print(sorted_salary_with_names[::-1])
 
     #given id, find employee's department and return its object
     def find_department(id):
@@ -150,7 +156,7 @@ class Employee:
         empid_index = empid_list.index(empid)
         Employee.emplist[empid_index].list_all()
 
-    def query_hiredate():
+    def query_hiredate(res):
         sorted_dates = [empl.hiredate for empl in Employee.emplist]
         sorted_dates.sort()
 
@@ -160,9 +166,12 @@ class Employee:
                 if date == empl.hiredate:
                     sorted_dates_with_names.append(f"{empl.name.title()}, hire date: {date}")
         
-        print(sorted_dates_with_names)
+        if res == "yes":
+            print(sorted_dates_with_names)
+        else:
+            print(sorted_dates_with_names[::-1])
     
-    def query_salary():
+    def query_salary(res):
         sorted_salary = [empl.salary for empl in Employee.emplist]
         sorted_salary.sort()
 
@@ -172,7 +181,10 @@ class Employee:
                 if salary == empl.salary:
                     sorted_salary_with_names.append(f"{empl.name.title()}, salary :{salary}")
 
-        print(sorted_salary_with_names)
+        if res == "yes":
+            print(sorted_salary_with_names)
+        else:
+            print(sorted_salary_with_names[::-1])
     
     def find_employee(id):
         for empl in Employee.emplist:
@@ -247,11 +259,13 @@ while True:
                     
                         match dept_empl_select:
                             case 1:
+                                res = input("\nSort by Ascending? (yes/no): ")
                                 print("\nHere are the employees sorted by hiredate")
-                                Department.dept_list[select_dept].query_hiredate()
+                                Department.dept_list[select_dept].query_hiredate(res)
                             case 2:
+                                res = input("\nSort by Ascending? (yes/no): ")
                                 print("\nHere are the employees sorted by salary")
-                                Department.dept_list[select_dept].query_salary()
+                                Department.dept_list[select_dept].query_salary(res)
                         break
                         
                 elif viewCurrent == 2:
@@ -317,11 +331,11 @@ while True:
                         except:
                             print("ID doesn't exist in database\n")
                 case 3:
-                    print("Here are the employees sorted by hire date: \n")
-                    Employee.query_hiredate()
+                    res = input("\nSort by Ascending? (yes/no): ")
+                    Employee.query_hiredate(res)
                 case 4:
-                    print("Here are the employees sorted by salary: \n")
-                    Employee.query_salary()
+                    res = input("\nSort by Ascending? (yes/no): ")
+                    Employee.query_salary(res)
                 case 5:
                     print("Here are all managers: \n")
                     Employee.list_managers()
