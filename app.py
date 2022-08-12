@@ -32,7 +32,7 @@ class Department:
         
     def list_employee(self):
         for employee in self.empl_query:
-            print(f"{employee.name.title()}, id: {employee.empid}, hire_date: {employee.hiredate}")
+            print(f"{employee.name.title()}, id: {employee.empid}, hire_date: {employee.hiredate}, salary: {employee.salary}")
 
     def remove_department(self, del_index):
         print(f"{self.name} has been removed from Department list")
@@ -72,7 +72,40 @@ class Department:
         else:
             print(sorted_salary_with_names[::-1])
 
-    #given id, find employee's department and return its object
+    def range_hiredate(self, low, high):
+        sorted_dates = [empl.hiredate for empl in self.empl_query]
+        sorted_dates.sort()
+        
+        range_dates = []
+        for date in sorted_dates:
+            if date >= low and date <= high:
+                range_dates.append(date)
+
+        range_dates_with_names = []
+        for date in range_dates:
+            for empl in self.empl_query:
+                if date == empl.hiredate:
+                    range_dates_with_names.append(f"{empl.name.title()}, hire date: {date}")
+
+        print(range_dates_with_names)
+
+    def range_salary(self, low, high):
+        sorted_salary = [empl.salary for empl in self.empl_query]
+        sorted_salary.sort()
+        
+        range_salary = []
+        for salary in sorted_salary:
+            if salary >= low and salary <= high:
+                range_salary.append(salary)
+
+        range_salary_with_names = []
+        for salary in range_salary:
+            for empl in self.empl_query:
+                if salary == empl.salary:
+                    range_salary_with_names.append(f"{empl.name.title()}, salary: {salary}")
+        print(range_salary_with_names)      
+
+    # given id, find employee's department and return its object
     def find_department(id):
         for dept in Department.dept_list:
             for empl in dept.empl_query:
@@ -185,6 +218,38 @@ class Employee:
             print(sorted_salary_with_names)
         else:
             print(sorted_salary_with_names[::-1])
+
+    def range_hiredate(low, high):
+        sorted_dates = [empl.hiredate for empl in Employee.emplist]
+        sorted_dates.sort()
+        
+        range_dates = []
+        for date in sorted_dates:
+            if date >= low and date <= high:
+                range_dates.append(date)
+
+        range_dates_with_names = []
+        for date in range_dates:
+            for empl in Employee.emplist:
+                if date == empl.hiredate:
+                    range_dates_with_names.append(f"{empl.name.title()}, hire date: {date}")
+        print(range_dates_with_names) 
+
+    def range_salary(low, high):
+        sorted_salary = [empl.salary for empl in Employee.emplist]
+        sorted_salary.sort()
+        
+        range_salary = []
+        for salary in sorted_salary:
+            if salary >= low and salary <= high:
+                range_salary.append(salary)
+
+        range_salary_with_names = []
+        for salary in range_salary:
+            for empl in Employee.emplist:
+                if salary == empl.salary:
+                    range_salary_with_names.append(f"{empl.name.title()}, salary: {salary}")
+        print(range_salary_with_names) 
     
     def find_employee(id):
         for empl in Employee.emplist:
@@ -250,8 +315,8 @@ while True:
                         class InvalidEntry (Exception): pass
                         dept_empl_select = None
                         try:
-                            dept_empl_select = int(input(f"\n1) View {Department.dept_list[select_dept].name.title()} Employees by Hire Date\n2) View {Department.dept_list[select_dept].name.title()} Employees by Salary\nChoose (1/2): "))
-                            if dept_empl_select != 1 and dept_empl_select != 2:
+                            dept_empl_select = int(input(f"\n1) View {Department.dept_list[select_dept].name.title()} Employees by Hire Date\n2) View {Department.dept_list[select_dept].name.title()} Employees by Salary\n3) View {Department.dept_list[select_dept].name.title()} Employees by Range Hire Date\n4) View {Department.dept_list[select_dept].name.title()} Employees by Range Salary\nChoose (1/2/3/4): "))
+                            if dept_empl_select != 1 and dept_empl_select != 2 and dept_empl_select != 3 and dept_empl_select != 4:
                                 raise InvalidEntry
                         except:
                             print("Invalid Entry Try Again")
@@ -266,6 +331,33 @@ while True:
                                 res = input("\nSort by Ascending? (yes/no): ")
                                 print("\nHere are the employees sorted by salary")
                                 Department.dept_list[select_dept].query_salary(res)
+                            case 3:
+                                while True:
+                                    try:
+                                        low_y = input("Enter a min year after 2015: ")
+                                        high_y = input("Enter a max year before 2023: ")
+                                        low_m = input("Enter a min mon after Jan (1,12): ")
+                                        high_m = input("Enter a max mon before Dec (1,12): ")
+                                        low_d = input("Enter a min day after 1 (1,31): ")
+                                        high_d = input("Enter a max day before 31 (1,31): ")
+
+                                        l_date = parser.parse(low_y + " " + low_m + " " + low_d)
+                                        h_date = parser.parse(high_y + " " + high_m + " " + high_d)
+
+                                        Department.dept_list[select_dept].range_hiredate(l_date, h_date)
+                                        break
+                                    
+                                    except:
+                                        print("Enter a valid entry")
+                            case 4:
+                                while True:
+                                    try:
+                                        l_sal = int(input("Enter a Minimum Salary: "))
+                                        h_sal = int(input("Enter a Maximum Salary : "))
+                                        Department.dept_list[select_dept].range_salary(l_sal, h_sal)
+                                        break
+                                    except:
+                                        print("Enter a valid entry")
                         break
                         
                 elif viewCurrent == 2:
@@ -307,9 +399,11 @@ while True:
             print("2) Search Employees by ID")
             print("3) See Sorted by Hire Date")
             print("4) See Sorted by Salary")
-            print("5) See all Managers")
-            print("6) Update an Employee")
-            print("7) Delete an Employee\n")
+            print("5) See Hire Date by Range")
+            print("6) See Salary by Range")
+            print("7) See all Managers")
+            print("8) Update an Employee")
+            print("9) Delete an Employee\n")
             print("Enter any other key to go back")
             select = int(input("Enter your selection: "))
 
@@ -337,9 +431,38 @@ while True:
                     res = input("\nSort by Ascending? (yes/no): ")
                     Employee.query_salary(res)
                 case 5:
+                    while True:
+                        try:
+                            low_y = input("Enter a min year after 2015: ")
+                            high_y = input("Enter a max year before 2023: ")
+                            low_m = input("Enter a min mon after Jan (1,12): ")
+                            high_m = input("Enter a max mon before Dec (1,12): ")
+                            low_d = input("Enter a min day after 1 (1,31): ")
+                            high_d = input("Enter a max day before 31 (1,31): ")
+
+                            l_date = parser.parse(low_y + " " + low_m + " " + low_d)
+                            h_date = parser.parse(high_y + " " + high_m + " " + high_d)
+
+                            Employee.range_hiredate(l_date, h_date)
+                            break
+                        
+                        except:
+                            print("Enter a valid entry")
+
+                case 6:
+                    while True:
+                        try:
+                            l_sal = int(input("Enter a Minimum Salary: "))
+                            h_sal = int(input("Enter a Maximum Salary : "))
+                            Employee.range_salary(l_sal, h_sal)
+                            break
+                        except:
+                            print("Enter a valid entry")
+                    
+                case 7:
                     print("Here are all managers: \n")
                     Employee.list_managers()
-                case 6:
+                case 8:
                     while True:
                         try:
                             search = int(input("Input ID of employee you would like to update (digit): "))
@@ -371,7 +494,7 @@ while True:
                             break
                         except:
                             print("ERROR ID doesn't exist in database\n")
-                case 7:
+                case 9:
                     while True:
                         try:
                             search = int(input("Enter ID of employee you would like to delete: "))
