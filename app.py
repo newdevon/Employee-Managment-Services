@@ -150,7 +150,7 @@ class Employee:
         empid_index = empid_list.index(empid)
         Employee.emplist[empid_index].list_all()
 
-    def query_hiredate():
+    def query_hiredate(res):
         sorted_dates = [empl.hiredate for empl in Employee.emplist]
         sorted_dates.sort()
 
@@ -160,9 +160,12 @@ class Employee:
                 if date == empl.hiredate:
                     sorted_dates_with_names.append(f"{empl.name.title()}, hire date: {date}")
         
-        print(sorted_dates_with_names)
+        if res == "yes":
+            print(sorted_dates_with_names)
+        else:
+            print(sorted_dates_with_names[::-1])
     
-    def query_salary():
+    def query_salary(res):
         sorted_salary = [empl.salary for empl in Employee.emplist]
         sorted_salary.sort()
 
@@ -172,7 +175,10 @@ class Employee:
                 if salary == empl.salary:
                     sorted_salary_with_names.append(f"{empl.name.title()}, salary :{salary}")
 
-        print(sorted_salary_with_names)
+        if res == "yes":
+            print(sorted_salary_with_names)
+        else:
+            print(sorted_salary_with_names[::-1])
     
     def find_employee(id):
         for empl in Employee.emplist:
@@ -317,11 +323,11 @@ while True:
                         except:
                             print("ID doesn't exist in database\n")
                 case 3:
-                    print("Here are the employees sorted by hire date: \n")
-                    Employee.query_hiredate()
+                    res = input("\nSort by Ascending? (yes/no): ")
+                    Employee.query_hiredate(res)
                 case 4:
-                    print("Here are the employees sorted by salary: \n")
-                    Employee.query_salary()
+                    res = input("\nSort by Ascending? (yes/no): ")
+                    Employee.query_salary(res)
                 case 5:
                     print("Here are all managers: \n")
                     Employee.list_managers()
